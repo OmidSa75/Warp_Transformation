@@ -41,7 +41,7 @@ def point_to_point_mapping(
     right = points[:, 0].max()
     points[:, 0] -= left
     points[:, 1] -= top
-    cropped_sticker = sticker[top:bottom, left:right, -1]
+    cropped_sticker = sticker[top:bottom, left:right, :]
     ratio = cropped_sticker.shape[0] / cropped_sticker.shape[1]
     new_height = int(target_wide * ratio)
     old_height, old_width = cropped_sticker.shape[:2]
@@ -52,11 +52,12 @@ def point_to_point_mapping(
         (target_wide, new_height),
         interpolation=cv2.INTER_CUBIC
     )
-    mask[0: new_height, 0:target_wide] = cv2.cvtColor(cropped_sticker, cv2.COLOR_GRAY2BGR)
+    # mask[0: new_height, 0:target_wide] = cv2.cvtColor(cropped_sticker, cv2.COLOR_GRAY2BGR)
+    mask[0: new_height, 0:target_wide] = cropped_sticker
     grid_x_l, grid_y_l = np.meshgrid(np.arange(0, mask.shape[1]), np.arange(0, mask.shape[0]))
     source = points.copy()
-    destination = target_points.squeeze(1)
-    grid_z_l = griddata(destination, source, (grid_x_l, grid_y_l), method='cubic')
+    # destination = target_points.squeeze(1)
+    grid_z_l = griddata(target_points, source, (grid_x_l, grid_y_l), method='cubic')
     map_x_l = grid_z_l[:, :, 0]
     map_y_l = grid_z_l[:, :, 1]
     map_x_32_l = map_x_l.astype(np.float32)
