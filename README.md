@@ -19,4 +19,6 @@ I used `makesense.ai` website to draw landmarks.
 
 After that follow the `inference.py` for more.
 
+## Result
+![](samples/comparison_result.png)
 
